@@ -27,17 +27,21 @@ class Book:
         except ValueError:
             self.published_on = None
 
-        self.narrators = [
-            narrator['fullName'] for narrator in data.get('narrators', [])
-        ]
+        self.narrators = []
 
-        self.authors = [
-            author['fullName'] for author in data.get('authors', [])
-        ]
+        for narrator in data.get('narrators', []):
+            self.narrators.append(narrator['fullName'].strip())
+
+        self.authors = []
+
+        for author in data.get('authors', []):
+            self.authors.append(author['fullName'].strip())
 
         if data.get('price'):
             self.price = {
-                'amount': decimal.Decimal(data['price'].get('amount', 0.0)),
+                'amount': decimal.Decimal(data['price'].get(
+                    'amount', 0.0
+                )).quantize(decimal.Decimal('0.01')),
                 'currency': data['price'].get('code')
             }
         else:
