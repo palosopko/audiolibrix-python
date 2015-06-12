@@ -107,7 +107,7 @@ class Catalogue:
             attributes['max'] = max
 
         client = audiolibrix.http_client.Requestor()
-        response = client.request(url='items/%s' + listing_type,
+        response = client.request(url='items/' + listing_type,
                                   attributes=attributes)
 
         try:
