@@ -35,7 +35,7 @@ if sys.version_info < (3, 0):
 
 setup(
     name='audiolibrix',
-    version='0.1.0',
+    version='0.2.0',
     description='Audiolibrix service python bindings',
     long_description=open("./README.md", "r").read(),
     author='Palo Sopko',
@@ -45,7 +45,7 @@ setup(
     install_requires=install_requires,
     use_2to3=True,
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "Natural Language :: English",
         "Operating System :: OS Independent",

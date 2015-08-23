@@ -7,6 +7,6 @@ from audiolibrix.error import AudiolibrixError, APIConnectionError, APIError, \
 api_credentials = None
 user_agent = ''
 
-VERSION = '0.1.0'
+VERSION = '0.2.0'
 
-API_ENDPOINT = 'http://test.digiapi.com/api/merchant/v1/'
+API_ENDPOINT = 'https://www.digiapi.com/api/merchant/v1/'

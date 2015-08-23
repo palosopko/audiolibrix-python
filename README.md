@@ -99,7 +99,11 @@ If you would like **to get order details** you call `audiolibrix.Order.get()` wi
 
 ## Changelog
 
-### v0.0.1: 15/02/2015
+### v0.2.0: 23/08/2015
+
+Version bump with fixes for incorrect URL creating when listing items and stripping whitespace with author handling. API endpoint URL set to Audiolibrix production servers.
+
+### v0.1.0: 15/02/2015
 
 Initial version with support for main API methods with the ommission of getting specific user's orders.
 
