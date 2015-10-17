@@ -35,7 +35,7 @@ if sys.version_info < (3, 0):
 
 setup(
     name='audiolibrix',
-    version='0.2.0',
+    version='0.2.1',
     description='Audiolibrix service python bindings',
     long_description=open("./README.md", "r").read(),
     author='Palo Sopko',

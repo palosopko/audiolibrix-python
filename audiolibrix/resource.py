@@ -6,10 +6,10 @@ import audiolibrix
 
 class Book:
     def __init__(self, data={}):
-        if data.get('forSale', False) is False:
-            self.status = 'inactive'
-        else:
+        if data.get('forSale', False):
             self.status = 'active'
+        else:
+            self.status = 'inactive'
 
         self.id = int(data.get('id'))
         self.ean = data.get('ean')
@@ -145,7 +145,7 @@ class Order:
 
         signature_base = '%s|%s|%s' % (
             user_email, order_id,
-            ','.join(str(book_id) for book_id in data['Items']))
+            ','.join(str(book_id) for book_id in sorted(data['Items'])))
 
         client = audiolibrix.http_client.Requestor()
         response = client.request(url='order',

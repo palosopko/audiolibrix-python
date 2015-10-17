@@ -77,7 +77,10 @@ class Requestor:
                     % response.text,
                     response.text)
 
-            if error['id'] == 'UnknownMerchant':
+            if error['id'] == 'InvalidSignature':
+                raise audiolibrix.error.InvalidRequestError('Incorrect signature',
+                                                            response.text)
+            elif error['id'] == 'UnknownMerchant':
                 raise audiolibrix.error.InvalidAuthorizationError(
                     'Authorization information incorrect or missing',
                     response.text)
