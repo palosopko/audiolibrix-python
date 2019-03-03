@@ -1,6 +1,7 @@
 import hmac
 import hashlib
 import json
+import simplejson
 import urllib
 import requests
 
