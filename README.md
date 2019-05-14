@@ -99,6 +99,10 @@ If you would like **to get order details** you call `audiolibrix.Order.get()` wi
 
 ## Changelog
 
+### v0.2.2: 14/05/2019
+
+Fix raising exception when response from Audiolibrix's API is not a valid JSON.
+
 ### v0.2.1: 17/10/2015
 
 When ordering multiple products always order their IDs in an ascending order so that the client application does not have to (otherwise we get `InvalidSignsature` error).

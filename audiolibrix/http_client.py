@@ -65,7 +65,8 @@ class Requestor:
             raise audiolibrix.error.APIError(
                 'Improperly structured JSON that cannot be read: %s '
                 '(HTTP status code %s)'
-                % str(e), response.text, response.status_code)
+                % (response.text, response.status_code),
+                response.text)
 
         try:
             items = data['data']
