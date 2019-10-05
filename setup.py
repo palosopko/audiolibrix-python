@@ -1,55 +1,66 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
-import warnings
+from codecs import open
+from setuptools import find_packages, setup
+from setuptools.command.test import test as TestCommand
 
-from setuptools import setup
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+class PyTest(TestCommand):
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
 
-try:
-    from distutils.command.build_py import build_py_2to3 as build_py
-except ImportError:
-    from distutils.command.build_py import build_py
+    def run_tests(self):
+        import pytest
 
-path, script = os.path.split(sys.argv[0])
-os.chdir(os.path.abspath(path))
+        errno = pytest.main([])
+        sys.exit(errno)
 
-install_requires = []
 
-if sys.version_info < (2, 6):
-    install_requires.append('requests >= 0.8.8, < 0.10.1')
-    install_requires.append('ssl')
-else:
-    install_requires.append('requests >= 0.8.8')
+current_path = os.path.abspath(os.path.dirname(__file__))
+os.chdir(os.path.abspath(current_path))
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'audiolibrix'))
 
-if sys.version_info < (3, 0):
-    try:
-        from util import json
-    except ImportError:
-        install_requires.append('simplejson')
+version = {}
+with open(
+    os.path.join(current_path, "audiolibrix", "version.py"), encoding="utf-8"
+) as f:
+    exec(f.read(), version)
 
 setup(
-    name='audiolibrix',
-    version='0.2.2',
-    description='Audiolibrix service python bindings',
+    name="audiolibrix",
+    version=version["VERSION"],
+    description="Audiolibrix Service Bindings for Python",
     long_description=open("./README.md", "r").read(),
-    author='Palo Sopko',
-    author_email='pavol.sopko@backbone.sk',
-    url='http://backbone.sk/en/',
-    packages=['audiolibrix'],
-    install_requires=install_requires,
-    use_2to3=True,
+    long_description_content_type="text/markdown",
+    author="Palo Sopko",
+    author_email="pavol@sopko.sk",
+    license="MIT",
+    keywords="audiolibrix",
+    packages=find_packages(exclude=["tests", "tests.*"]),
+    install_requires=["requests >= 2.21.0", "six >= 1.3.0"],
+    tests_require=["pytest >= 4.6.2, < 4.7"],
+    cmdclass={"test": PyTest},
+    project_urls={
+        "Bug Tracker": "https://github.com/palosopko/audiolibrix-python/issues",
+        "Source Code": "https://github.com/palosopko/audiolibrix-python",
+    },
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
-        "Natural Language :: English",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: Implementation :: PyPy",
         "Topic :: Software Development :: Libraries :: Python Modules",
-        "License :: OSI Approved :: MIT License"
-    ])
+    ],
+)

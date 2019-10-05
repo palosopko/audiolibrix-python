@@ -1,129 +1,142 @@
-import hmac
-import hashlib
-import json
-import simplejson
-import urllib
-import requests
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, print_function
 
 import audiolibrix
+import hmac
+import requests
+
+from hashlib import sha256
 
 
 class Auth:
     def __init__(self):
-        try:
-            assert isinstance(audiolibrix.api_credentials, tuple)
-        except AssertionError:
+        if (
+            not isinstance(audiolibrix.api_credentials, tuple)
+            or len(audiolibrix.api_credentials) != 2
+        ):
             raise audiolibrix.error.APIError(
-                'Invalid credentials to Audiolibrix service provided '
-                '(expected two-part tuple with `client_id` '
-                'and `shared_secret`).')
+                "Invalid credentials to Audiolibrix service provided (expected "
+                "two-part tuple with `client_id` and `shared_secret`)."
+            )
 
     def sign(self, message):
-        return hmac.new(audiolibrix.api_credentials[1],
-                        message,
-                        hashlib.sha256).hexdigest().upper()
+        return (
+            hmac.new(
+                audiolibrix.api_credentials[1].encode("utf-8"),
+                message.encode("utf-8"),
+                sha256,
+            )
+            .hexdigest()
+            .upper()
+        )
 
 
 class Requestor:
-    def request(self, url, data=[], attributes=[], method='GET',
-                signature_base=''):
-        headers = {'x-merchantapi-merchant': audiolibrix.api_credentials[0],
-                   'User-Agent': 'audiolibrix-python/' + audiolibrix.VERSION,
-                   'Accept': 'application/json'}
+    def request(
+        self, url, data=[], params=[], method="GET", signature_base=""
+    ):
+        headers = {
+            "x-merchantapi-merchant": audiolibrix.api_credentials[0],
+            "User-Agent": "audiolibrix-python/" + audiolibrix.VERSION,
+            "Accept": "application/json",
+        }
 
-        if method.upper() == 'POST':
-            headers['Content-Type'] = 'application/json'
+        if method.upper() == "POST":
+            headers["Content-Type"] = "application/json"
 
-            if signature_base != '':
-                data['Signature'] = Auth().sign(signature_base)
-        elif method.upper() == 'GET':
-            if signature_base != '':
-                attributes['signature'] = Auth().sign(signature_base)
-
-        url = audiolibrix.API_ENDPOINT + url
-
-        if len(attributes):
-            url += '?' + urllib.urlencode(attributes)
-
-        if (len(data)):
-            data = json.dumps(data)
-        else:
-            data = None
-
+            if signature_base != "":
+                data["Signature"] = Auth().sign(signature_base)
+        elif method.upper() == "GET":
+            if signature_base != "":
+                params["signature"] = Auth().sign(signature_base)
         try:
-            response = requests.request(method=method,
-                                        url=url,
-                                        headers=headers,
-                                        data=data,
-                                        timeout=60)
-        except Exception, e:
+            response = requests.request(
+                method=method,
+                url=audiolibrix.API_ENDPOINT + url,
+                headers=headers,
+                data=data,
+                params=params,
+                timeout=60,
+            )
+        except Exception as e:
             self._handle_request_error(e)
 
         try:
             data = response.json()
-        except simplejson.scanner.JSONDecodeError, e:
+        except ValueError:
             raise audiolibrix.error.APIError(
-                'Improperly structured JSON that cannot be read: %s '
-                '(HTTP status code %s)'
+                "Improperly structured JSON that cannot be read: %s "
+                "(HTTP status code %s)"
                 % (response.text, response.status_code),
-                response.text)
+                response.text,
+            )
 
         try:
-            items = data['data']
+            items = data["data"]
         except (KeyError, TypeError):
             try:
-                error = data['error']
+                error = data["error"]
             except (KeyError):
                 raise audiolibrix.error.APIError(
-                    'Invalid error response object from API: %s'
+                    "Invalid error response object from API: %s"
                     % response.text,
-                    response.text)
+                    response.text,
+                )
 
-            if error['id'] == 'InvalidSignature':
-                raise audiolibrix.error.InvalidRequestError('Incorrect signature',
-                                                            response.text)
-            elif error['id'] == 'UnknownMerchant':
+            if error["id"] == "InvalidSignature":
+                raise audiolibrix.error.InvalidRequestError(
+                    "Incorrect signature", response.text
+                )
+            elif error["id"] == "UnknownMerchant":
                 raise audiolibrix.error.InvalidAuthorizationError(
-                    'Authorization information incorrect or missing',
-                    response.text)
-            elif error['id'] == 'NotFound':
+                    "Authorization information incorrect or missing",
+                    response.text,
+                )
+            elif error["id"] == "NotFound":
                 raise audiolibrix.error.NotFoundError(
-                    'Requested item not found or does not exist',
-                    response.text)
-            elif error['id'] == 'NoItems':
+                    "Requested item not found or does not exist", response.text
+                )
+            elif error["id"] == "NoItems":
                 raise audiolibrix.error.InvalidRequestError(
-                    'No items to be bought', response.text)
-            elif error['id'] == 'InvalidEmail':
+                    "No items to be bought", response.text
+                )
+            elif error["id"] == "InvalidEmail":
                 raise audiolibrix.error.InvalidRequestError(
-                    'Buyer\'s e-mail address invalid or missing',
-                    response.text)
-            elif error['id'] == 'InvalidOrderId':
+                    "Buyer's e-mail address invalid or missing", response.text
+                )
+            elif error["id"] == "InvalidOrderId":
                 raise audiolibrix.error.InvalidRequestError(
-                    'Merchant\'s e-mail address invalid or missing',
-                    response.text)
-            elif error['id'] == 'ItemsNotFound':
+                    "Merchant's e-mail address invalid or missing",
+                    response.text,
+                )
+            elif error["id"] == "ItemsNotFound":
                 raise audiolibrix.error.InvalidRequestError(
-                    'Following items are not found: %s' %
-                    ', '.join([str(item) for item in error['items']]),
-                    response.text)
-            elif error['id'] == 'ItemsNotForSale':
+                    "Following items are not found: %s"
+                    % ", ".join([str(item) for item in error["items"]]),
+                    response.text,
+                )
+            elif error["id"] == "ItemsNotForSale":
                 raise audiolibrix.error.InvalidRequestError(
-                    'Following items are not for sale: %s'
-                    % ', '.join([str(item) for item in error['items']]),
-                    response.text)
-            elif error['id'] == 'OrderMismatch':
+                    "Following items are not for sale: %s"
+                    % ", ".join([str(item) for item in error["items"]]),
+                    response.text,
+                )
+            elif error["id"] == "OrderMismatch":
                 raise audiolibrix.error.InvalidRequestError(
-                    'Order with the same merchant identifier already exists, '
-                    'but contains different items: %s'
-                    % ', '.join([str(item) for item in error['items']]),
-                    response.text)
-            elif error['id'] == 'OrderNotFound':
+                    "Order with the same merchant identifier already exists, but "
+                    "contains different items: %s"
+                    % ", ".join([str(item) for item in error["items"]]),
+                    response.text,
+                )
+            elif error["id"] == "OrderNotFound":
                 raise audiolibrix.error.NotFoundError(
-                    'Order not found or does not exist',
-                    response.text)
+                    "Order not found or does not exist", response.text
+                )
             else:
                 raise audiolibrix.error.APIError(
-                    'Unknown error occurred, try again later', response.text)
+                    "Unknown error occurred, try again later", response.text
+                )
 
         return items
 

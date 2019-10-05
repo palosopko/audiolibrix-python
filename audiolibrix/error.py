@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+
+from __future__ import absolute_import, division, print_function
+
+
 class AudiolibrixError(Exception):
     def __init__(self, message=None, http_body=None, http_status=None):
         super(AudiolibrixError, self).__init__(message)

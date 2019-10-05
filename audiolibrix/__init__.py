@@ -1,12 +1,19 @@
-from audiolibrix.http_client import Requestor
-from audiolibrix.resource import Book, Catalogue, Order
-from audiolibrix.error import AudiolibrixError, APIConnectionError, APIError, \
-    InvalidAuthorizationError, InvalidRequestError, NotFoundError
+# -*- coding: utf-8 -*-
+
+from .error import (  # noqa: F401
+    APIConnectionError,
+    APIError,
+    AudiolibrixError,
+    InvalidAuthorizationError,
+    InvalidRequestError,
+    NotFoundError,
+)
+from .http_client import Requestor  # noqa: F401
+from .resource import Book, Catalogue, Order  # noqa: F401
+from .version import VERSION
 
 # Configuration variables
 api_credentials = None
-user_agent = ''
+user_agent = ""
 
-VERSION = '0.2.2'
-
-API_ENDPOINT = 'https://www.digiapi.com/api/merchant/v1/'
+API_ENDPOINT = "https://www.digiapi.com/api/merchant/v1/"
