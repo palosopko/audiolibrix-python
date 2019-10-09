@@ -55,7 +55,7 @@ class Requestor:
                 method=method,
                 url=audiolibrix.API_ENDPOINT + url,
                 headers=headers,
-                data=data,
+                json=data,
                 params=params,
                 timeout=60,
             )

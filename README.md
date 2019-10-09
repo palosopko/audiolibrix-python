@@ -97,6 +97,10 @@ If you would like **to get order details** you call `audiolibrix.Order.get()` wi
 
 ## Changelog
 
+### v0.3.1: 09/10/2019
+
+Send proper JSON to Audiolibrix service.
+
 ### v0.3.0: 05/10/2019
 
 Python 3 compatibility and various project formal changes to make everything better.
