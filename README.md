@@ -4,8 +4,8 @@ A Python library for [Audiolibrix](http://www.publixing.com/)'s API v1 (via JSON
 
 The bindings allow you to:
 
-1.  Get the catalogue of all books
-2.  Get single books details with links to previews
+1.  Get the catalog of all books
+2.  Get single book details with links to previews
 3.  Create order for multiple books at once
 4.  Get download links for given books previously bought by a user
 
@@ -13,15 +13,15 @@ The bindings allow you to:
 
 Since the documentation to the Audiolibrix service is marked as confidential there is no immediate plan to release this package as open-source. For now, to install the package using `pip`:
 
-	pip install git+git@dev01.backbone.sk:artforum/audiolibrix-python.git#egg=audiolibrix
-
-To install via `requirements` file from your project, add the following for the moment before updating dependencies:
-
-	git+git@dev01.backbone.sk:artforum/audiolibrix-python.git#egg=audiolibrix
+	pip install audiolibrix
 
 To install from source, run:
 
 	python setup.py install
+
+To install via `requirements` file from your project, add the following for the moment before updating dependencies:
+
+	git+https://github.com/palosopko/audiolibrix-python.git#egg=audiolibrix
 
 ## Usage
 
@@ -30,7 +30,7 @@ First off, you need to require the library and provide authentication informatio
 	import audiolibrix
 	audiolibrix.api_credentials = ('test', '0000000000000000')
 
-**Getting catalogue** is accomplished by calling `audiolibrix.Catalogue.all()` with optional arguments for listing trhough catalogue and for type of returned items, which can be either `full` (default), `simple` or `price`. The method returns dictionary with book IDs as keys and `audiolibrix.Book` objects as values.
+**Getting catalogue** is accomplished by calling `audiolibrix.Catalogue.all()` with optional arguments for listing through catalogue and for type of returned items, which can be either `full` (default), `simple` or `price`. The method returns dictionary with book IDs as keys and `audiolibrix.Book` objects as values.
 
 	audiolibrix.Catalogue.all(start=0, max=1, listing_type='full')
 
@@ -97,6 +97,10 @@ If you would like **to get order details** you call `audiolibrix.Order.get()` wi
 
 ## Changelog
 
+### v0.3.2: 08/01/2021
+
+Move over to GitHub and finally drop Python 2 support.
+
 ### v0.3.1: 09/10/2019
 
 Send proper JSON to Audiolibrix service.
@@ -119,4 +123,4 @@ Version bump with fixes for incorrect URL creating when listing items and stripp
 
 ### v0.1.0: 15/02/2015
 
-Initial version with support for main API methods with the ommission of getting specific user's orders.
+Initial version with support for main API methods with the omission of getting specific user's orders.

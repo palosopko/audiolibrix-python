@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from .error import (  # noqa: F401
     APIConnectionError,
     APIError,
@@ -10,7 +8,7 @@ from .error import (  # noqa: F401
 )
 from .http_client import Requestor  # noqa: F401
 from .resource import Book, Catalogue, Order  # noqa: F401
-from .version import VERSION
+from .version import VERSION  # noqa: F401
 
 # Configuration variables
 api_credentials = None
