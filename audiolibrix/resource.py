@@ -71,7 +71,7 @@ class Book:
             }
 
     @classmethod
-    def get(cls, book_id):
+    def get(cls, book_id, timeout=None):
         if not isinstance(book_id, int):
             raise InvalidRequestError(
                 "Invalid value '%s' for book identifier. "
@@ -80,7 +80,7 @@ class Book:
             )
 
         client = audiolibrix.http_client.Requestor()
-        response = client.request(url="item/" + str(book_id))
+        response = client.request(url="item/" + str(book_id), timeout=timeout)
 
         try:
             item = response["item"]
@@ -97,7 +97,7 @@ class Catalogue:
     ALLOWED_LISTING_TYPES = ["full", "simple", "price"]
 
     @classmethod
-    def all(cls, start=None, max=None, listing_type="full"):
+    def all(cls, start=None, max=None, listing_type="full", timeout=None):
         if listing_type not in cls.ALLOWED_LISTING_TYPES:
             raise InvalidRequestError(
                 "Invalid value '%s' for request attribute 'type'. "
@@ -115,7 +115,9 @@ class Catalogue:
             params["max"] = max
 
         client = audiolibrix.http_client.Requestor()
-        response = client.request(url="items/" + listing_type, params=params)
+        response = client.request(
+            url="items/" + listing_type, params=params, timeout=timeout
+        )
 
         try:
             items = response["items"]
@@ -140,7 +142,7 @@ class Order:
         self.books = [int(book_id) for book_id in data.get("items", [])]
 
     @classmethod
-    def create(cls, books, order_id, user_email):
+    def create(cls, books, order_id, user_email, timeout=None):
         data = {
             "BuyerEmail": user_email,
             "MerchantOrderId": order_id,
@@ -161,6 +163,7 @@ class Order:
             method="POST",
             data=data,
             signature_base=signature_base,
+            timeout=timeout,
         )
 
         try:
@@ -174,13 +177,14 @@ class Order:
         return Order(order)
 
     @classmethod
-    def get(cls, order_id):
+    def get(cls, order_id, timeout=None):
         client = audiolibrix.http_client.Requestor()
         response = client.request(
             url="orderdetails",
             method="GET",
             params={"merchantOrderId": order_id},
             signature_base=str(order_id),
+            timeout=timeout,
         )
 
         try:

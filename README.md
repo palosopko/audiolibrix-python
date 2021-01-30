@@ -97,6 +97,10 @@ If you would like **to get order details** you call `audiolibrix.Order.get()` wi
 
 ## Changelog
 
+### v0.3.4: 31/01/2021
+
+Allow setting default network request timeout and per-request timeouts as well. The timeouts are directly passed on to `requests` library used to execute the network requests to Audiolibrix's API.
+
 ### v0.3.2: 08/01/2021
 
 Move over to GitHub and finally drop Python 2 support.

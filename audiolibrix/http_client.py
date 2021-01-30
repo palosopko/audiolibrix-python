@@ -30,7 +30,13 @@ class Auth:
 
 class Requestor:
     def request(
-        self, url, data=[], params=[], method="GET", signature_base=""
+        self,
+        url,
+        data=[],
+        params=[],
+        method="GET",
+        signature_base="",
+        timeout=None,
     ):
         headers = {
             "x-merchantapi-merchant": audiolibrix.api_credentials[0],
@@ -46,6 +52,7 @@ class Requestor:
         elif method.upper() == "GET":
             if signature_base != "":
                 params["signature"] = Auth().sign(signature_base)
+
         try:
             response = requests.request(
                 method=method,
@@ -53,7 +60,9 @@ class Requestor:
                 headers=headers,
                 json=data,
                 params=params,
-                timeout=60,
+                timeout=timeout
+                if timeout
+                else audiolibrix.default_request_timeout,
             )
         except Exception as e:
             self._handle_request_error(e)

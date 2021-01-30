@@ -13,5 +13,6 @@ from .version import VERSION  # noqa: F401
 # Configuration variables
 api_credentials = None
 user_agent = ""
+default_request_timeout = 60
 
 API_ENDPOINT = "https://www.digiapi.com/api/merchant/v1/"
